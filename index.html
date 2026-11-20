@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Môj dizajnérsky profil – dotazník</title>
+<style>
+  :root{--bg:#f6f5f2;--card:#fff;--ink:#1d1d1f;--mut:#6b6b70;--line:#e3e1dc;--acc:#e5484d;--acc2:#2f6fdb;--ok:#1f9d55}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  header{background:var(--ink);color:#fff;padding:22px 20px 0}
+  header .wrap{max-width:860px;margin:0 auto}
+  h1{margin:0 0 4px;font-size:26px;letter-spacing:-.3px}
+  header p{margin:0 0 16px;color:#bdbdc2;font-size:14px}
+  nav{display:flex;gap:4px}
+  nav button{border:0;background:transparent;color:#bdbdc2;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0}
+  nav button.on{background:var(--bg);color:var(--ink)}
+  main{max-width:860px;margin:0 auto;padding:24px 20px 60px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:16px}
+  .q h3{margin:0 0 4px;font-size:17px}
+  .q .hint{color:var(--mut);font-size:13px;margin:0 0 12px}
+  .q.err{border-color:var(--acc);box-shadow:0 0 0 2px #e5484d22}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 16px}
+  .field{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .field span{font-size:14px}
+  .field input[type=number]{width:80px;font:inherit;padding:5px 7px;border:1px solid #cfcdc8;border-radius:7px;text-align:right}
+  .field input[type=range]{width:110px;accent-color:var(--acc)}
+  .field output{min-width:20px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  input[type=text],textarea,select{width:100%;font:inherit;padding:9px 11px;border:1px solid #cfcdc8;border-radius:9px;background:#fff}
+  .sum{margin-top:10px;font-size:14px;font-weight:600}
+  .sum.bad{color:var(--acc)} .sum.good{color:var(--ok)}
+  .colors{display:flex;gap:14px;flex-wrap:wrap}
+  .colors label{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--mut)}
+  .colors input[type=color]{width:64px;height:64px;border:1px solid var(--line);border-radius:12px;padding:3px;background:#fff;cursor:pointer}
+  .steps{display:grid;gap:8px}
+  .btn{border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer;background:var(--ink);color:#fff}
+  .btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.small{padding:7px 12px;font-size:13px;font-weight:600}
+  .btn.danger{background:#fff;color:var(--acc);border:1px solid #f1c4c5}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .msg{color:var(--acc);font-weight:600;margin-top:10px}
+  .hero{background:var(--ink);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px}
+  .hero h2{margin:0 0 4px;font-size:24px}
+  .hero p{margin:0;color:#c9c9ce}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat b{display:block;font-size:22px}
+  .stat span{color:var(--mut);font-size:13px}
+  table.res{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+  table.res th{text-align:left;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:6px 8px;border-bottom:1px solid var(--line)}
+  table.res td{padding:7px 8px;border-bottom:1px solid #f0eeea;vertical-align:middle}
+  table.res td.n{text-align:right;font-variant-numeric:tabular-nums;width:90px}
+  .bar{height:10px;border-radius:5px;background:var(--acc2);min-width:2px}
+  .barcell{width:36%}
+  .qhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .qhead h3{margin:0;font-size:16px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#2f6fdb15;color:var(--acc2);margin-top:4px}
+  .palette{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .sw{width:110px;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+  .sw div{height:60px}
+  .sw p{margin:0;padding:6px 8px;font-family:ui-monospace,Consolas,monospace}
+  .path{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .path .st{flex:1;min-width:140px;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fafaf8;font-size:14px}
+  .path .st small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+  .path .ar{align-self:center;color:var(--mut);font-weight:700}
+  .note{font-size:13px;color:var(--mut)}
+  .summary li{margin-bottom:6px}
+  .empty{color:var(--mut);text-align:center;padding:30px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .hidden{display:none!important}
+  @media print{header,nav,.no-print{display:none!important}.card{break-inside:avoid}body{background:#fff}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Môj dizajnérsky profil</h1>
+    <p>Vyplň dotazník o sebe. Spolužiak z tvojich odpovedí vytvorí prezentáciu.</p>
+    <nav>
+      <button id="tabForm" class="on" onclick="showTab('form')">Vyplniť dotazník</button>
+      <button id="tabSum" onclick="showTab('sum')">Zhrnutie profilu</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="viewForm">
+    <form id="f" novalidate></form>
+  </section>
+  <section id="viewSum" class="hidden">
+    <div id="sumContent"></div>
+    <div class="card no-print">
+      <h3 style="margin-top:0">Výmena dotazníkov</h3>
+      <p class="note">Najjednoduchšie je vymeniť si miesta pri počítačoch. Dotazník môžeš poslať aj ako súbor: klikni <b>Exportovať</b>, pošli súbor spolužiakovi a on ho otvorí cez <b>Importovať</b>.</p>
+      <div class="row">
+        <button class="btn sec small" onclick="exportData()">Exportovať profil (.json)</button>
+        <label class="btn sec small" style="display:inline-block">Importovať profil
+          <input type="file" accept=".json,application/json" class="hidden" onchange="importData(this.files[0]);this.value=''">
+        </label>
+        <button class="btn sec small" onclick="window.print()">Tlačiť / uložiť ako PDF</button>
+        <button class="btn sec small" onclick="editAgain()">Upraviť odpovede</button>
+        <button class="btn danger small" onclick="clearAll()">Vymazať profil</button>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const DAY = ['spánok','škola','cesta do školy a domov','sociálne siete a mobil','tvorba (kreslenie, grafika, foto)','hry','šport','jedlo a domáce povinnosti','iné'];
+const SOCIAL = ['Instagram','TikTok','YouTube','Pinterest','Snapchat','Facebook','iné'];
+const WEEK = ['pondelok','utorok','streda','štvrtok','piatok','sobota','nedeľa'];
+const PROGRAMS = ['Photoshop','Illustrator','Canva','GIMP','Blender','Procreate / kreslenie na tablete','kreslenie na papier'];
+const STYLES = ['minimalizmus','retro','Y2K','ručne kreslený','futuristický','grunge'];
+const BUDGET = ['počítač','monitor','grafický tablet','softvér a licencie','fotoaparát','kurzy a workshopy','iné'];
+const KEY = 'dizajn-profil-v1';
+
+let mem = null;
+function load(){ try{ const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : mem; }catch(e){ return mem; } }
+function save(p){ mem = p; try{ if(p) localStorage.setItem(KEY, JSON.stringify(p)); else localStorage.removeItem(KEY); }catch(e){} }
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = (n,d=1) => String(Math.round(n*10**d)/10**d).replace('.', ',');
+const slug = s => s.replace(/[^a-z0-9]/gi,'_');
+
+/* ---------- form ---------- */
+function numGrid(id, items, unit, max){
+  return `<div class="grid">${items.map(i=>`<label class="field"><span>${esc(i)}</span><span><input type="number" min="0" max="${max}" step="${unit==='h'?'0.5':'5'}" name="${id}__${slug(i)}" data-q="${id}" data-item="${esc(i)}" inputmode="decimal"> ${unit}</span></label>`).join('')}</div>`;
+}
+function rangeGrid(id, items){
+  return `<div class="grid">${items.map(i=>`<label class="field"><span>${esc(i)}</span><span style="display:flex;align-items:center;gap:8px"><input type="range" min="1" max="10" value="5" name="${id}__${slug(i)}" data-q="${id}" data-item="${esc(i)}" oninput="this.nextElementSibling.value=this.value"><output>5</output></span></label>`).join('')}</div>`;
+}
+function buildForm(){
+  const f = document.getElementById('f');
+  f.innerHTML = `
+  <div class="card q" id="q_meno"><h3>1. Tvoje meno alebo prezývka</h3><p class="hint">Bude v názve prezentácie, ktorú o tebe spolužiak urobí.</p>
+    <input type="text" name="meno" maxlength="40" placeholder="napr. Adam K."></div>
+
+  <div class="card q" id="q_den"><h3>2. Ako vyzerá tvoj bežný školský deň?</h3><p class="hint">Rozdeľ 24 hodín. Môžeš zadávať aj pol hodiny (0,5).</p>
+    ${numGrid('den', DAY, 'h', 24)}<div class="sum" id="sum_den"></div></div>
+
+  <div class="card q" id="q_siete"><h3>3. Koľko minút denne strávíš na sociálnych sieťach?</h3><p class="hint">Odhadni priemerný deň. Ak sieť nepoužívaš, napíš 0. Čas uvidíš aj v mobile (Čas pred obrazovkou / Digitálna rovnováha).</p>
+    ${numGrid('siete', SOCIAL, 'min', 1440)}</div>
+
+  <div class="card q" id="q_tyzden"><h3>4. Koľko minút si minulý týždeň venoval tvorbe?</h3><p class="hint">Kreslenie, grafika, fotenie, video, 3D a podobne, škola aj voľný čas.</p>
+    ${numGrid('tyzden', WEEK, 'min', 1440)}</div>
+
+  <div class="card q" id="q_programy"><h3>5. Ohodnoť programy a nástroje</h3><p class="hint">1 = vôbec ma nebaví / neviem, 10 = milujem ho.</p>
+    ${rangeGrid('programy', PROGRAMS)}</div>
+
+  <div class="card q" id="q_styly"><h3>6. Ako veľmi sa ti páčia tieto štýly?</h3><p class="hint">1 = vôbec, 10 = veľmi.</p>
+    ${rangeGrid('styly', STYLES)}</div>
+
+  <div class="card q" id="q_rozpocet"><h3>7. Dostal si 1 000 € na vybavenie pre grafika. Ako ich rozdelíš?</h3><p class="hint">Súčet musí byť presne 1 000 €.</p>
+    ${numGrid('rozpocet', BUDGET, '€', 1000)}<div class="sum" id="sum_rozpocet"></div></div>
+
+  <div class="card q" id="q_farby"><h3>8. Tvoja osobná farebná paleta</h3><p class="hint">Vyber 3 farby, ktoré ťa vystihujú. Klikni na štvorec.</p>
+    <div class="colors">
+      <label><input type="color" name="farba1" value="#e5484d">hlavná</label>
+      <label><input type="color" name="farba2" value="#2f6fdb">doplnková</label>
+      <label><input type="color" name="farba3" value="#f5d90a">akcent</label>
+    </div></div>
+
+  <div class="card q" id="q_cesta"><h3>9. Tvoja cesta k vysnívanej práci</h3><p class="hint">Kým chceš byť a aké 3 kroky ťa tam dovedú?</p>
+    <div class="steps">
+      <input type="text" name="ciel" maxlength="60" placeholder="Vysnívaná práca (napr. ilustrátor kníh, UX dizajnér, 3D animátor)">
+      <input type="text" name="krok1" maxlength="80" placeholder="1. krok (napr. naučiť sa Illustrator)">
+      <input type="text" name="krok2" maxlength="80" placeholder="2. krok (napr. urobiť si portfólio)">
+      <input type="text" name="krok3" maxlength="80" placeholder="3. krok (napr. VŠ alebo prvá práca)">
+    </div></div>
+
+  <div class="card q" id="q_projekt"><h3>10. Na ktorý svoj výtvor si najviac hrdý a čo by si chcel raz vytvoriť?</h3>
+    <textarea name="projekt" rows="3" maxlength="400"></textarea></div>
+
+  <div class="row"><button type="submit" class="btn">Uložiť a zobraziť zhrnutie</button></div>
+  <div class="msg hidden" id="formMsg"></div>`;
+  f.onsubmit = submitForm;
+  f.addEventListener('input', e => { updateSums(); const c = e.target.closest('.q'); if(c) c.classList.remove('err'); });
+  updateSums();
+}
+const numVals = (f,id) => Object.fromEntries([...f.querySelectorAll(`[data-q="${id}"]`)].map(i=>[i.dataset.item, parseFloat(String(i.value).replace(',','.'))||0]));
+const total = o => Object.values(o).reduce((a,b)=>a+b,0);
+function updateSums(){
+  const f = document.getElementById('f');
+  const d = total(numVals(f,'den')), b = total(numVals(f,'rozpocet'));
+  const sd = document.getElementById('sum_den'), sb = document.getElementById('sum_rozpocet');
+  sd.textContent = `Spolu: ${fmt(d)} h z 24 h` + (d===24?' ✔':d>24?' – je to viac ako 24 h':` – chýba ${fmt(24-d)} h`); sd.className = 'sum ' + (d===24?'good':'bad');
+  sb.textContent = `Spolu: ${fmt(b,0)} € z 1 000 €` + (b===1000?' ✔':b>1000?' – je to viac ako 1 000 €':` – zostáva ${fmt(1000-b,0)} €`); sb.className = 'sum ' + (b===1000?'good':'bad');
+}
+function submitForm(e){
+  e.preventDefault();
+  const f = document.getElementById('f');
+  const v = n => (f.elements[n]?.value || '').trim();
+  const p = {
+    meno: v('meno'), den: numVals(f,'den'), siete: numVals(f,'siete'), tyzden: numVals(f,'tyzden'),
+    programy: numVals(f,'programy'), styly: numVals(f,'styly'), rozpocet: numVals(f,'rozpocet'),
+    farby: [v('farba1'),v('farba2'),v('farba3')], ciel: v('ciel'), kroky: [v('krok1'),v('krok2'),v('krok3')], projekt: v('projekt'),
+    t: new Date().toISOString()
+  };
+  const errs = [];
+  if(!p.meno) errs.push('meno');
+  if(total(p.den)!==24) errs.push('den');
+  if(total(p.tyzden)===0) errs.push('tyzden');
+  if(total(p.rozpocet)!==1000) errs.push('rozpocet');
+  if(!p.ciel || p.kroky.some(k=>!k)) errs.push('cesta');
+  document.querySelectorAll('.q').forEach(q=>q.classList.toggle('err', errs.includes(q.id.slice(2))));
+  const msg = document.getElementById('formMsg');
+  if(errs.length){
+    msg.textContent = 'Skontroluj otázky označené červeným (meno, 24 hodín, týždeň, 1 000 €, cesta k práci).'; msg.classList.remove('hidden');
+    document.getElementById('q_'+errs[0]).scrollIntoView({behavior:'smooth',block:'center'}); return;
+  }
+  msg.classList.add('hidden');
+  save(p); showTab('sum'); window.scrollTo({top:0});
+}
+function fillForm(p){
+  const f = document.getElementById('f');
+  ['den','siete','tyzden','programy','styly','rozpocet'].forEach(id => f.querySelectorAll(`[data-q="${id}"]`).forEach(i => {
+    const val = p[id]?.[i.dataset.item]; if(val!==undefined){ i.value = val; if(i.type==='range') i.nextElementSibling.value = val; }
+  }));
+  f.elements.meno.value = p.meno||''; f.elements.ciel.value = p.ciel||''; f.elements.projekt.value = p.projekt||'';
+  (p.farby||[]).forEach((c,i)=>{ if(c) f.elements['farba'+(i+1)].value = c; });
+  (p.kroky||[]).forEach((k,i)=>{ f.elements['krok'+(i+1)].value = k; });
+  updateSums();
+}
+
+/* ---------- summary ---------- */
+const tables = {};
+function block(id, title, tag, rows, cols, unit, note){
+  // rows: [{k, v}] ; cols: header names
+  const max = Math.max(...rows.map(r=>r.v),1);
+  const tot = total(Object.fromEntries(rows.map(r=>[r.k,r.v])));
+  const withPct = unit !== 'body';
+  tables[id] = `${cols[0]}\t${cols[1]}${withPct?'\tPercento':''}\n` + rows.map(r=>`${r.k}\t${fmt(r.v)}${withPct?`\t${fmt(tot?r.v/tot*100:0)} %`:''}`).join('\n');
+  return `<div class="card"><div class="qhead"><div><h3>${title}</h3><span class="tag">${tag}</span></div>
+    <button class="btn sec small no-print" onclick="copyText('${id}')">Kopírovať tabuľku</button></div>
+    <table class="res"><tr><th>${cols[0]}</th><th class="n">${cols[1]}</th>${withPct?'<th class="n">%</th>':''}<th class="barcell"></th></tr>
+    ${rows.map(r=>`<tr><td>${esc(r.k)}</td><td class="n"><b>${fmt(r.v)}</b></td>${withPct?`<td class="n">${fmt(tot?r.v/tot*100:0)} %</td>`:''}<td class="barcell"><div class="bar" style="width:${r.v/max*100}%"></div></td></tr>`).join('')}
+    ${unit!=='body'?`<tr><td><b>Spolu</b></td><td class="n"><b>${fmt(tot)}</b></td><td class="n">100 %</td><td></td></tr>`:''}
+    </table>${note?`<p class="note" style="margin:8px 0 0">${note}</p>`:''}</div>`;
+}
+const toRows = (o, order) => order.map(k=>({k, v:o?.[k]||0}));
+const topOf = o => Object.entries(o).sort((a,b)=>b[1]-a[1])[0];
+const lowOf = o => Object.entries(o).sort((a,b)=>a[1]-b[1])[0];
+
+function renderSummary(){
+  const p = load();
+  const box = document.getElementById('sumContent');
+  if(!p){ box.innerHTML = `<div class="card empty">Zatiaľ tu nie je žiadny profil. Vyplň dotazník alebo importuj profil spolužiaka.</div>`; return; }
+  const socTot = total(p.siete), weekTot = total(p.tyzden);
+  const topSoc = topOf(p.siete), topDay = topOf(p.tyzden), topProg = topOf(p.programy), lowProg = lowOf(p.programy), topSty = topOf(p.styly), topBud = topOf(p.rozpocet);
+  const progAvg = total(p.programy)/PROGRAMS.length;
+  const tvorbaH = p.den['tvorba (kreslenie, grafika, foto)']||0, mobilH = p.den['sociálne siete a mobil']||0;
+
+  let h = `<div class="hero"><h2>Dizajnérsky profil: ${esc(p.meno)}</h2><p>Vysnívaná práca: <b>${esc(p.ciel)}</b></p></div>
+  <div class="stats">
+    <div class="stat"><b>${fmt(socTot/60)} h</b><span>denne na sociálnych sieťach</span></div>
+    <div class="stat"><b>${fmt(weekTot/60)} h</b><span>tvorby za týždeň</span></div>
+    <div class="stat"><b>${esc(topProg[0])}</b><span>najobľúbenejší nástroj (${topProg[1]}/10)</span></div>
+    <div class="stat"><b>${esc(topSty[0])}</b><span>najobľúbenejší štýl (${topSty[1]}/10)</span></div>
+  </div>`;
+
+  const facts = [
+    `Najviac času v bežnom dni zaberá: ${topOf(p.den)[0]} (${fmt(topOf(p.den)[1])} h, ${fmt(topOf(p.den)[1]/24*100)} % dňa).`,
+    `Na mobile a sociálnych sieťach strávi ${fmt(mobilH)} h denne, na tvorbe ${fmt(tvorbaH)} h.` + (mobilH>tvorbaH?` Mobil teda vyhráva o ${fmt(mobilH-tvorbaH)} h.`:mobilH<tvorbaH?` Tvorba vyhráva o ${fmt(tvorbaH-mobilH)} h.`:''),
+    socTot ? `Najviac minút na sieťach: ${topSoc[0]} (${fmt(topSoc[1],0)} min, ${fmt(topSoc[1]/socTot*100)} % času na sieťach).` : `Sociálne siete nepoužíva.`,
+    `Najviac tvoril v deň: ${topDay[0]} (${fmt(topDay[1],0)} min). Priemerne ${fmt(weekTot/7,0)} min denne.`,
+    topProg[1]===lowProg[1] ? `Všetky nástroje hodnotil rovnako (${topProg[1]}/10).` : `Najobľúbenejší nástroj je ${topProg[0]} (${topProg[1]}/10), najmenej ${lowProg[0]} (${lowProg[1]}/10). Priemerné hodnotenie nástrojov: ${fmt(progAvg)}/10.`,
+    `Z 1 000 € by najviac dal na: ${topBud[0]} (${fmt(topBud[1],0)} €, ${fmt(topBud[1]/10)} %).`,
+  ];
+  tables.summary = `Dizajnérsky profil: ${p.meno}\nVysnívaná práca: ${p.ciel}\n` + facts.join('\n');
+  h += `<div class="card summary"><div class="qhead"><h3>Slovné zhrnutie</h3><button class="btn sec small no-print" onclick="copyText('summary')">Kopírovať text</button></div>
+    <ul style="margin:12px 0 0;padding-left:20px">${facts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+
+  h += block('den','Bežný deň (24 hodín)','koláčový graf',toRows(p.den,DAY),['Činnosť','Hodiny'],'h');
+  h += block('siete','Čas na sociálnych sieťach za deň','stĺpcový alebo pruhový graf',toRows(p.siete,SOCIAL),['Sieť','Minúty'],'min');
+  h += block('tyzden','Tvorba počas týždňa','stĺpcový alebo čiarový graf',toRows(p.tyzden,WEEK),['Deň','Minúty'],'min');
+  h += block('programy','Hodnotenie programov a nástrojov','pruhový graf (zoradiť od najlepšieho)',toRows(p.programy,PROGRAMS).sort((a,b)=>b.v-a.v),['Nástroj','Hodnotenie (1–10)'],'body');
+  h += block('styly','Obľúbenosť štýlov','stĺpcový alebo paprskový (radar) graf',toRows(p.styly,STYLES),['Štýl','Hodnotenie (1–10)'],'body');
+  h += block('rozpocet','Rozpočet 1 000 € na vybavenie','koláčový alebo prstencový graf',toRows(p.rozpocet,BUDGET),['Položka','Suma (€)'],'€');
+
+  tables.farby = 'Farba\tHEX\n' + ['hlavná','doplnková','akcent'].map((n,i)=>`${n}\t${p.farby[i]}`).join('\n');
+  h += `<div class="card"><div class="qhead"><div><h3>Osobná farebná paleta</h3><span class="tag">použi ako farby prezentácie</span></div>
+    <button class="btn sec small no-print" onclick="copyText('farby')">Kopírovať kódy</button></div>
+    <div class="palette">${['hlavná','doplnková','akcent'].map((n,i)=>`<div class="sw"><div style="background:${esc(p.farby[i])}"></div><p>${n}<br>${esc(p.farby[i]).toUpperCase()}</p></div>`).join('')}</div>
+    <p class="note" style="margin:10px 0 0">V PowerPointe: Výplň tvaru → Ďalšie farby → Vlastné → do poľa Hex vlož kód.</p></div>`;
+
+  tables.cesta = `Cesta k vysnívanej práci\n1. ${p.kroky[0]}\n2. ${p.kroky[1]}\n3. ${p.kroky[2]}\nCieľ: ${p.ciel}`;
+  h += `<div class="card"><div class="qhead"><div><h3>Cesta k vysnívanej práci</h3><span class="tag">podklad pre diagram (vytvor ho v PowerPointe)</span></div>
+    <button class="btn sec small no-print" onclick="copyText('cesta')">Kopírovať text</button></div>
+    <div class="path">${p.kroky.map((k,i)=>`<div class="st"><small>${i+1}. krok</small>${esc(k)}</div><span class="ar">→</span>`).join('')}<div class="st" style="border-color:var(--ink)"><small>cieľ</small><b>${esc(p.ciel)}</b></div></div></div>`;
+
+  if(p.projekt) h += `<div class="card"><h3 style="margin:0 0 8px;font-size:16px">Na čo je hrdý a čo chce vytvoriť</h3><p style="margin:0">${esc(p.projekt)}</p></div>`;
+  h += `<p class="note">Tlačidlo <b>Kopírovať tabuľku</b> skopíruje údaje, ktoré vložíš do PowerPointu (Vložiť → Tabuľka) alebo do údajov grafu (Vložiť → Graf → Upraviť údaje). Grafy a diagram vytvor v PowerPointe sám.</p>`;
+  box.innerHTML = h;
+}
+
+function copyText(id){
+  const t = tables[id] || '';
+  const done = () => toast('Skopírované');
+  const fallback = () => { const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} ta.remove(); };
+  if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
+}
+function toast(m){ const el=document.getElementById('toast'); el.textContent=m; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1500); }
+
+function exportData(){
+  const p = load(); if(!p){ toast('Najprv vyplň dotazník'); return; }
+  const blob = new Blob([JSON.stringify(p,null,1)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'profil-' + (p.meno||'ziak').replace(/[^\p{L}\p{N}]+/gu,'-') + '.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+async function importData(file){
+  if(!file) return;
+  try{ const p = JSON.parse(await file.text()); if(!p || !p.den || !p.rozpocet) throw 0; save(p); fillForm(p); renderSummary(); toast('Profil načítaný: ' + (p.meno||'')); }
+  catch(e){ toast('Súbor sa nepodarilo načítať'); }
+}
+function editAgain(){ const p = load(); if(p) fillForm(p); showTab('form'); }
+function clearAll(){
+  if(!confirm('Naozaj vymazať profil v tomto prehliadači?')) return;
+  save(null); document.getElementById('f').reset(); buildForm(); renderSummary();
+}
+function showTab(t){
+  document.getElementById('viewForm').classList.toggle('hidden', t!=='form');
+  document.getElementById('viewSum').classList.toggle('hidden', t!=='sum');
+  document.getElementById('tabForm').classList.toggle('on', t==='form');
+  document.getElementById('tabSum').classList.toggle('on', t==='sum');
+  if(t==='sum') renderSummary();
+}
+buildForm();
+const saved = load(); if(saved){ fillForm(saved); }
+</script>
+</body>
+</html>
